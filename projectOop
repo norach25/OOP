@@ -1,0 +1,135 @@
+class Author:
+    def __init__(self, name, country):
+        self.name = name
+        self.country = country
+
+class Book:
+    def __init__(self, title, author, publisher, ISBN, copies):
+        self.title = title
+        self.author = author
+        self.publisher = publisher
+        self.ISBN = ISBN
+        self.copies = copies
+        
+    def display(self):
+        print("Title:", self.title)
+        print("Author:", self.author.name)
+        print("Publisher:", self.publisher)
+        print("ISBN:", self.ISBN)
+        print("Copies:", self.copies)
+
+class Patron:
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
+        self.books = []
+        
+    def borrow_book(self, book):
+        if book.copies > 0:
+            self.books.append(book)
+            book.copies -= 1
+            print(f"{self.name} borrowed {book.title}.")
+        else:
+            print("Sorry, all copies of this book have been borrowed.")
+    
+    def return_book(self, book):
+        if book in self.books:
+            self.books.remove(book)
+            book.copies += 1
+            print(f"{self.name} returned {book.title}.")
+        else:
+            print("You have not borrowed this book.")
+    
+class Library:
+    def __init__(self):
+        self.authors = []
+        self.books = []
+        self.patrons = []
+    
+    def add_author(self, name, country):
+        author = Author(name, country)
+        self.authors.append(author)
+        print(f"Added author {name}.")
+    
+    def add_book(self, title, author_name, publisher, ISBN, copies):
+        for author in self.authors:
+            if author.name == author_name:
+                book = Book(title, author, publisher, ISBN, copies)
+                self.books.append(book)
+                print(f"Added book {title}.")
+                return
+        print("Author not found.")
+    
+    def add_patron(self, name, email):
+        patron = Patron(name, email)
+        self.patrons.append(patron)
+        print(f"Added patron {name}.")
+    
+    def display_books(self):
+        for book in self.books:
+            book.display()
+    
+    def search_book_by_title(self, title):
+        for book in self.books:
+            if book.title == title:
+                book.display()
+                return
+        print("Book not found.")
+    
+    def search_book_by_author(self, author_name):
+        for book in self.books:
+            if book.author.name == author_name:
+                book.display()
+    
+    def borrow_book(self, patron_name, book_title):
+        for patron in self.patrons:
+            if patron.name == patron_name:
+                for book in self.books:
+                    if book.title == book_title:
+                        patron.borrow_book(book)
+                        return
+                print("Book not found.")
+                return
+        print("Patron not found.")
+    
+    def return_book(self, patron_name, book_title):
+        for patron in self.patrons:
+            if patron.name == patron_name:
+                for book in self.books:
+                    if book.title == book_title:
+                        patron.return_book(book)
+                        return
+                print("Book not found.")
+                return
+        print("Patron not found.")
+
+# Example usage
+
+library = Library()
+
+# Add books
+library.add_book("The Alchemist", "Paulo Coelho", "1988", "9780061122415", 10)
+library.add_book("The Great Gatsby", "F. Scott Fitzgerald", "1925", "978-0743273565", 2)
+library.add_book("To Kill a Mockingbird", "Harper Lee", "1960", "978-0446310789", 3)
+
+# Add authors
+library.add_author("Paulo Coelho", "Brazilian")
+library.add_author("F. Scott Fitzgerald", "American")
+library.add_author("Harper Lee", "American")
+
+# Search for books
+results = library.search_book_by_author("Paulo Coelho")
+if results:
+    print("Books by Paulo Coelho:")
+    for book in results:
+        print(book.title)
+else:
+    print("No books found by Paulo Coelho")
+
+results = library.search_book_by_title("To Kill a Mockingbird")
+if results:
+    print(f"{len(results)} results found for 'To Kill a Mockingbird':")
+    for book in results:
+        print(f"{book.title} by {book.author} ({book.publication_date})")
+else:
+    print("No books found with the title 'To Kill a Mockingbird'")
