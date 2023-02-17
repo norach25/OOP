@@ -1,0 +1,99 @@
+import csv
+
+class FileHandler:
+    def __init__(self, file_path):
+        self.file_path = file_path
+    
+    def create(self, data):
+        with open(self.file_path, "a", newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(data)
+    
+    def read_all(self):
+        with open(self.file_path, "r", newline='') as file:
+            reader = csv.reader(file)
+            return list(reader)
+    
+    def read_by_id(self, id):
+        with open(self.file_path, "r", newline='') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == id:
+                    return row
+        return None
+    
+    def update(self, id, new_data):
+        rows = self.read_all()
+        with open(self.file_path, "w", newline='') as file:
+            writer = csv.writer(file)
+            for row in rows:
+                if row[0] == id:
+                    writer.writerow(new_data)
+                else:
+                    writer.writerow(row)
+    
+    def delete(self, id):
+        rows = self.read_all()
+        with open(self.file_path, "w", newline='') as file:
+            writer = csv.writer(file)
+            for row in rows:
+                if row[0] != id:
+                    writer.writerow(row)
+
+def display_data(data):
+    print("ID\tName\tCourse\tAge")
+    for row in data:
+        print("{}\t{}\t{}\t{}".format(row[0], row[1], row[2], row[3]))
+
+import os
+
+def main():
+    file_handler = FileHandler("students.csv")
+    while True:
+        os.system('cls')
+        print("[1] Create new student")
+        print("[2] Update student information")
+        print("[3] Delete student information")
+        print("[4] Read all students")
+        print("[5] Exit")
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            id = input("Enter student ID: ")
+            name = input("Enter student name: ")
+            course = input("Enter student course: ")
+            age = input("Enter student age: ")
+            file_handler.create([id, name, course, age])
+            print("Student added successfully!")
+        elif choice == "2":
+            id = input("Enter student ID to update: ")
+            data = file_handler.read_by_id(id)
+            if data is not None:
+                name = input("Enter updated student name ({}): ".format(data[1]))
+                course = input("Enter updated student course ({}): ".format(data[2]))
+                age = input("Enter updated student age ({}): ".format(data[3]))
+                new_data = [id, name, course, age]
+                file_handler.update(id, new_data)
+                print("Student information updated successfully!")
+            else:
+                print("Student not found!")
+        elif choice == "3":
+            id = input("Enter student ID to delete: ")
+            data = file_handler.read_by_id(id)
+            if data is not None:
+                confirmation = input("Are you sure you want to delete {} (Y/N)? ".format(data[1]))
+                if confirmation.lower() == "y":
+                    file_handler.delete(id)
+                    print("Student information deleted successfully!")
+            else:
+                print("Student not found!")
+        elif choice == "4":
+            data = file_handler.read_all()
+            display_data(data)
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
