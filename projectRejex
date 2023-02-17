@@ -1,0 +1,29 @@
+import re
+
+file_name = 'File_execution.txt'
+with open(file_name, 'r') as f:
+    lines = f.readlines()
+
+# Display lines that start with "Python"
+print("Python include the following:")
+for line in lines:
+    if line.startswith('Python'):
+        print(line.strip())
+
+# Extract all the numbers in the file and compute the sum of the numbers
+numbers = re.findall('[0-9]+', ''.join(lines))
+numbers_sum = sum(map(int, numbers))
+print(f"The sum of all numbers is {numbers_sum}")
+
+# Find the highest number
+highest_number = max(map(int, numbers))
+print(f"The highest number is {highest_number}")
+
+# Count all vowel letters
+vowels = re.findall('[aeiouAEIOU]', ''.join(lines))
+vowel_count = len(vowels)
+print(f"The total vowel count is {vowel_count}")
+
+# Count occurrences of the word "Python"
+python_count = len(re.findall('Python', ''.join(lines)))
+print(f"Python word count is {python_count}")
